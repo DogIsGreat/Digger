@@ -44,6 +44,23 @@ build:
 	@mkdir -p build
 	@mkdir -p bin
 
+debug: $(TARGET)
+ifeq ($(UNAME_S),Darwin)
+	lldb ./$(TARGET)
+endif
+ifeq ($(UNAME_S),Linux)
+	gdb ./$(TARGET)
+endif
+	
+
+memcheck: $(TARGET)
+ifeq ($(UNAME_S),Darwin)
+	leaks --atExit ./$(TARGET)
+endif
+ifeq ($(UNAME_S),Linux)
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(TARGET)
+endif
+
 #Cleaning 
 clean:
 	rm -rf build $(OBJECTS) $(TESTS) $(EXECUTABLE) 
